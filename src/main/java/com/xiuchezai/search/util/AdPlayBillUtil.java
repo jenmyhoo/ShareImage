@@ -135,7 +135,6 @@ public class AdPlayBillUtil {
                     try {
                         //image = ImageIO.read(ImageUtil.readBytes(bytes));
                         image = ImageUtil.toBufferedImage(ImageUtil.getImage(bytes));
-                        ;
                         drawImage(graphics2d, image, bean.getAlign(), bean.getStart_x(), bean.getStart_y(), bean.getEnd_x(), bean.getEnd_y());
                     } catch (Exception e) {
                         e.printStackTrace();
