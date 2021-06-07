@@ -81,7 +81,7 @@ public class AdPlayBillUtil {
         acShareAdContentBeanList.add(acShareAdContentBean4);
 
         Map<String, String> requestParamMap = new HashMap<>(8);
-        requestParamMap.put("title", "匠伯机油滤清器/机油格/机滤宝骏310排量1.2L/1.5L");
+        requestParamMap.put("title", "王老吉刺柠吉230ml*12罐整箱果汁饮料刺梨汁夏日解渴维c饮料特价");
         requestParamMap.put("price", "￥20.99");
         requestParamMap.put("goods_main_img", "D:/4.jpg");
         requestParamMap.put("qr", "D:/3.jpg");
@@ -133,9 +133,11 @@ public class AdPlayBillUtil {
                     byte[] bytes = FingerUtil.decryptByteBase64(requestParamMap.get(bean.getContent_param()));
                     BufferedImage image = null;
                     try {
-                        image = ImageIO.read(ImageUtil.readBytes(bytes));
+                        //image = ImageIO.read(ImageUtil.readBytes(bytes));
+                        image = ImageUtil.toBufferedImage(ImageUtil.getImage(bytes));
+                        ;
                         drawImage(graphics2d, image, bean.getAlign(), bean.getStart_x(), bean.getStart_y(), bean.getEnd_x(), bean.getEnd_y());
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     break;
@@ -428,8 +430,8 @@ public class AdPlayBillUtil {
         }
         BufferedImage image = null;
         try {
-            image = ImageIO.read(ImageUtil.readBytes(bytes));
-        } catch (IOException e) {
+            image = ImageUtil.toBufferedImage(ImageUtil.getImage(bytes));
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return image;

@@ -1,7 +1,15 @@
 package com.xiuchezai.search.util;
 
 import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import java.awt.Graphics;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -169,10 +177,14 @@ public class ImageUtil {
         try {
             // 读入文件
             File file = new File(fileName);
+            if (!file.exists()) {
+                return null;
+            }
             // 构造Image对象
-            BufferedImage image = ImageIO.read(file);
+            //BufferedImage image = ImageIO.read(file);
+            Image image = Toolkit.getDefaultToolkit().getImage(file.getPath());
             return image;
-        } catch (IOException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -183,9 +195,10 @@ public class ImageUtil {
     public static Image getImage(InputStream stream) {
         try {
             // 构造Image对象
-            BufferedImage image = ImageIO.read(stream);
+            //BufferedImage image = ImageIO.read(stream);
+            Image image = Toolkit.getDefaultToolkit().createImage(readInputStream(stream));
             return image;
-        } catch (IOException e) {
+        } catch (Exception e) {
             return null;
         }
     }
@@ -196,11 +209,37 @@ public class ImageUtil {
     public static Image getImage(byte[] bytes) {
         try {
             // 构造Image对象
-            BufferedImage image = ImageIO.read(readBytes(bytes));
+            //BufferedImage image = ImageIO.read(readBytes(bytes));
+            Image image = Toolkit.getDefaultToolkit().createImage(bytes);
             return image;
-        } catch (IOException e) {
+        } catch (Exception e) {
             return null;
         }
+    }
+
+    public static BufferedImage toBufferedImage(Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage) image;
+        }
+        image = new ImageIcon(image).getImage();
+        BufferedImage bufferedImage = null;
+        GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        try {
+            int transparency = Transparency.OPAQUE;
+            GraphicsDevice graphicsDevice = graphicsEnvironment.getDefaultScreenDevice();
+            GraphicsConfiguration graphicsConfiguration = graphicsDevice.getDefaultConfiguration();
+            bufferedImage = graphicsConfiguration.createCompatibleImage(image.getWidth(null), image.getHeight(null), transparency);
+        } catch (HeadlessException e) {
+
+        }
+        if (bufferedImage == null) {
+            int imageType = BufferedImage.TYPE_INT_RGB;
+            bufferedImage = new BufferedImage(image.getWidth(null), image.getHeight(null), imageType);
+        }
+        Graphics graphics = bufferedImage.createGraphics();
+        graphics.drawImage(image, 0, 0, null);
+        graphics.dispose();
+        return bufferedImage;
     }
 
     /**
